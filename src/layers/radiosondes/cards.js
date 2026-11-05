@@ -1,4 +1,4 @@
-import { t, tn, formatNumber } from '../../i18n/index.js';
+import { t, formatNumber } from '../../i18n/index.js';
 import { formatQuantity } from '../../ui/unitLabels.js';
 import { utcClock } from '../../ui/rail/utcClock.js';
 import {
@@ -189,22 +189,4 @@ export function buildSelectedSondeCard(
     placement: 'above',
     horizonCull: true,
   };
-}
-/** Format the airborne population readout. */
-export function aloftText(count) {
-  return tn(count, '{count} aloft', '{count} aloft', {
-    count: formatNumber(count),
-  });
-}
-/** Format the combined observed/inferred landed population readout. */
-export function landedText(count) {
-  return tn(count, '{count} landed', '{count} landed', {
-    count: formatNumber(count),
-  });
-}
-/** Format the silent airborne population readout. */
-export function signalLostText(count) {
-  return tn(count, '{count} signal lost', '{count} signal lost', {
-    count: formatNumber(count),
-  });
 }

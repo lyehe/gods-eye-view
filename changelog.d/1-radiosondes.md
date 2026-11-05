@@ -1,5 +1,6 @@
 - Add Weather balloons from SondeHub (CC BY-SA 2.0), off by default in Weather
-  with share-link token `9`. One shared MQTT subscription sends live updates
+  with share-link token `9`. The layer row shows per-state counts and connection
+  status or launch guidance. One shared MQTT subscription sends live updates
   with bounded client queues and a 3 h memory-only store. Cold starts use
   recent-first REST backfill and show partial data immediately. Cached
   20 px sprites and aircraft distance scaling distinguish flight states, with

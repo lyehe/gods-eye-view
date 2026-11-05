@@ -10,6 +10,8 @@ import { createCredits } from '../streetLevel/credits.js';
 import * as policy from './policy.js';
 import { createColdRadiosondeServer } from '../../testSupport/radiosondeColdServer.mjs';
 const start = 1_800_000_000_000;
+const nextLaunch = 'Next launch window 11:00–12:00 UTC · in 3h';
+const noneAloft = 'None aloft — launches are around 00:00 and 12:00 UTC';
 const raw = (serial = 'TEST123', timeMs = start, altM = 10000) => ({
   serial,
   timeMs,
@@ -460,7 +462,7 @@ test('every flight state swaps its cached symbol on the same billboard, selected
   assert.notEqual(images.get('ascending:true'), images.get('descending:true'));
 });
 
-test('Weather legend splits flight directions, combines both landed states, and shares cached billboard symbols', (t) => {
+test('row legend counts flight directions and both landed states, omitting zero unknowns', (t) => {
   const h = harness(t);
   for (const delta of [-130000, -65000, 0])
     h.event({ type: 'frames', ...snap([raw('LANDED', start + delta, 500)]) });
@@ -491,26 +493,18 @@ test('Weather legend splits flight directions, combines both landed states, and 
       ['Signal lost', 5],
     ],
   );
-  const sprites = h.viewer.scene.primitives.get(0);
-  const find = (serial) =>
-    Array.from({ length: sprites.length }, (_, i) => sprites.get(i)).find(
-      (s) => s.id === `radiosonde:${serial}`,
-    );
-  for (const [index, serial] of [
-    [0, 'UP0'],
-    [1, 'DOWN0'],
-    [2, 'UNKNOWN0'],
-    [3, 'LANDED'],
-    [4, 'LOST0'],
-  ]) {
-    assert.equal(
-      legend[index].image,
-      find(serial).image,
-      `${serial} legend uses the same cached image`,
-    );
-  }
+  assert.deepEqual(
+    legend.map(({ color }) => color),
+    ['ascending', 'descending', 'unknown', 'landed', 'signal-lost'].map(
+      (phase) => policy.RADIOSONDE_SYMBOLS[phase].color,
+    ),
+  );
+  const controls = h.layer.getRowControls();
+  assert.equal(Object.hasOwn(controls, 'readout'), false);
+  assert.equal(Object.hasOwn(controls, 'summary'), false);
+  assert.equal(controls.info, nextLaunch);
   const canvases = spriteCanvasAllocations;
-  assert.deepEqual(h.layer.getRowControls().legend, legend);
+  assert.deepEqual(h.layer.getRowControls(), controls);
   assert.equal(spriteCanvasAllocations, canvases);
   h.event({
     type: 'snapshot',
@@ -786,7 +780,10 @@ test('live status received during a queued data batch clears stale acquisition m
   h.expireBatch();
   assert.equal(h.layer.getStats().count, 2);
   assert.equal(h.layer.getStats().stale, false);
-  assert.equal(h.layer.getRowControls().summary.status, null);
+  assert.equal(
+    h.layer.getRowControls().info,
+    'Next launch window 11:00–12:00 UTC · in 2h',
+  );
 });
 
 function retryClock(t) {
@@ -1236,8 +1233,9 @@ for (const [transport, mqtt, sse] of [
     }
   });
 }
-test('launch rhythm follows the injected UTC clock across both windows and midnight', (t) => {
+test('row info follows the injected UTC launch clock across both windows and midnight', (t) => {
   const h = harness(t);
+  h.event({ type: 'snapshot', ...snap() });
   for (const [iso, expected] of [
     ['2026-11-04T00:00:00Z', 'Next launch window 11:00–12:00 UTC · in 11h'],
     ['2026-11-04T10:45:00Z', 'Next launch window 11:00–12:00 UTC · in 15m'],
@@ -1250,14 +1248,8 @@ test('launch rhythm follows the injected UTC clock across both windows and midni
     ['2026-11-04T23:59:59Z', 'Launch window now · until 00:00 UTC'],
     ['2026-11-05T00:00:00Z', 'Next launch window 11:00–12:00 UTC · in 11h'],
   ]) {
-    h.setNow(Date.parse(iso)); // Numeric input must be converted before utcClock (T-25).
-    const summary = h.layer.getRowControls().summary;
-    assert.equal(
-      summary.lines.find((line) => line.id === 'launch-window')?.text,
-      expected,
-      iso,
-    );
-    assert.equal(summary.lines.at(-1).id, 'disclaimer');
+    h.setNow(Date.parse(iso));
+    assert.equal(h.layer.getRowControls().info, expected, iso);
   }
 });
 
@@ -1608,8 +1600,10 @@ for (const mode of ['unchanged snapshot', 'failed snapshot', 'fresh stream']) {
       ['Ascending', 'Descending', 'Landed', 'Signal lost'],
     );
     assert.equal(
-      h.layer.getRowControls().summary.compact,
-      '0 aloft · 1 landed · 1 signal lost',
+      h.layer.getRowControls().info,
+      mode === 'failed snapshot'
+        ? 'Reconnecting to SondeHub…'
+        : 'Next launch window 11:00–12:00 UTC · in 2h',
     );
     const marks = () =>
       Array.from({ length: sprites.length }, (_, i) => sprites.get(i));
@@ -1976,10 +1970,12 @@ test('unavailable startup stays enabled; stale/recovery/empty states and polling
   });
   assert.equal(await h.layer.update(h.viewer), true);
   assert.equal(layerFeedState(h.layer.getStats()), 'unavailable');
+  assert.equal(h.layer.getRowControls().info, 'Reconnecting to SondeHub…');
   fail = false;
   await h.layer.update(h.viewer);
   assert.equal(calls, 2);
   assert.equal(layerFeedState(h.layer.getStats()), 'nominal');
+  assert.equal(h.layer.getRowControls().info, nextLaunch);
   h.setNow(start + 300001);
   assert.equal(h.layer.getStats().stale, true);
   const pushed = harness(t);
@@ -1991,11 +1987,37 @@ test('unavailable startup stays enabled; stale/recovery/empty states and polling
   pushed.event({ type: 'snapshot', ...snap([]) });
   assert.equal(pushed.layer.getStats().status, 'empty');
   assert.equal(pushed.layer.getStats().error, null);
-  assert.equal(pushed.layer.getRowControls().summary.status, null);
-  assert.match(
-    pushed.layer.getRowControls().summary.lines.at(-1).text,
-    /Coverage depends on volunteer receivers/,
-  );
+  assert.equal(pushed.layer.getRowControls().info, noneAloft);
+});
+
+test('row info gives connection status priority over empty and loaded launch guidance', (t) => {
+  for (const frames of [[], [raw()]]) {
+    const h = harness(t);
+    assert.equal(h.layer.getRowControls().info, 'Reconnecting to SondeHub…');
+    h.event({ type: 'snapshot', ...snap(frames) });
+    const ready = frames.length ? nextLaunch : noneAloft;
+    assert.equal(h.layer.getRowControls().info, ready);
+    h.event({ type: 'status', upstream: 'unavailable' });
+    assert.equal(
+      h.layer.getRowControls().info,
+      'Live feed unavailable on this server',
+    );
+    h.state('connecting');
+    assert.equal(
+      h.layer.getRowControls().info,
+      'Live feed unavailable on this server',
+    );
+    h.event({ type: 'status', upstream: 'live' });
+    assert.equal(h.layer.getRowControls().info, 'Reconnecting to SondeHub…');
+    h.state('open');
+    assert.equal(h.layer.getRowControls().info, ready);
+    h.event({ type: 'status', upstream: 'degraded' });
+    assert.equal(h.layer.getRowControls().info, 'Reconnecting to SondeHub…');
+    h.event({ type: 'status', upstream: 'live' });
+    const controls = h.layer.getRowControls();
+    assert.equal(controls.info, ready);
+    assert.deepEqual(h.layer.getRowControls(), controls);
+  }
 });
 
 test('history for a deselected sonde cannot publish, and selection eviction clears the path', async (t) => {
@@ -2023,7 +2045,7 @@ test('history for a deselected sonde cannot publish, and selection eviction clea
   assert.equal(h.entries.get('radiosondes-selected')?.length ?? 0, 0);
 });
 
-test('unchanged snapshots retain primitives, fresh streams skip polling and readout timestamps use UTC', async (t) => {
+test('unchanged snapshots retain primitives and row controls while fresh streams skip polling', async (t) => {
   let reads = 0;
   const h = harness(t, {
     getSnapshot: async () => {
@@ -2033,14 +2055,13 @@ test('unchanged snapshots retain primitives, fresh streams skip polling and read
   });
   await h.layer.update(h.viewer);
   const sprite = h.viewer.scene.primitives.get(0).get(0);
+  const controls = h.layer.getRowControls();
   h.event({ type: 'snapshot', ...snap() });
   assert.equal(h.viewer.scene.primitives.get(0).get(0), sprite);
   await h.layer.update(h.viewer);
   assert.equal(reads, 1);
-  assert.equal(
-    h.layer.getRowControls().summary.detail,
-    new Date(start).toISOString().slice(11, 16) + ' UTC',
-  );
+  assert.equal(controls.info, nextLaunch);
+  assert.deepEqual(h.layer.getRowControls(), controls);
   assert.equal(h.layer.getStats().loadingLabel, 'LIVE · updated <1m ago');
   h.layer.disable();
   assert.equal(h.layer.getStats().stale, false);
@@ -2094,14 +2115,14 @@ for (const outcome of ['success', 'failure']) {
     h.click('radiosonde:OTHER123');
     await settle();
     const stats = h.layer.getStats();
-    const summary = h.layer.getRowControls().summary;
+    const controls = h.layer.getRowControls();
     const trail = h.trails[0];
     if (outcome === 'success') resolve(snap([raw()], 'degraded'));
     else reject(Error('late HTTP failure'));
     assert.equal(await pending, true);
     assert.equal(h.layer.getStats().count, 2);
     assert.deepEqual(h.layer.getStats(), stats);
-    assert.deepEqual(h.layer.getRowControls().summary, summary);
+    assert.deepEqual(h.layer.getRowControls(), controls);
     assert.equal(
       h.entries.get('radiosondes-selected')[0].title,
       'BALLOON · OTHER123',
@@ -2115,14 +2136,14 @@ test('an obsolete snapshot cannot change feed metadata before it is rejected', (
   const h = harness(t);
   h.event({ type: 'snapshot', ...snap() });
   const stats = h.layer.getStats();
-  const summary = h.layer.getRowControls().summary;
+  const controls = h.layer.getRowControls();
   h.event({
     type: 'snapshot',
     ...snap([], 'unavailable'),
     fetchedAt: start - 1,
   });
   assert.deepEqual(h.layer.getStats(), stats);
-  assert.deepEqual(h.layer.getRowControls().summary, summary);
+  assert.deepEqual(h.layer.getRowControls(), controls);
 });
 
 test('a rejected obsolete push cannot supersede a newer HTTP snapshot still in flight', async (t) => {
@@ -2170,7 +2191,7 @@ for (const transport of ['missing', 'throws']) {
     await h.layer.update(h.viewer);
     assert.equal(layerFeedState(h.layer.getStats()), 'nominal');
     assert.equal(h.layer.getStats().stale, false);
-    assert.equal(h.layer.getRowControls().summary.status, null);
+    assert.equal(h.layer.getRowControls().info, nextLaunch);
     answer = snap([raw()], 'degraded');
     await h.layer.update(h.viewer);
     assert.equal(h.layer.getStats().stale, true);
@@ -2183,7 +2204,7 @@ for (const transport of ['missing', 'throws']) {
     answer = snap();
     await h.layer.update(h.viewer);
     assert.equal(layerFeedState(h.layer.getStats()), 'nominal');
-    assert.equal(h.layer.getRowControls().summary.status, null);
+    assert.equal(h.layer.getRowControls().info, nextLaunch);
     h.setNow(start + 300001);
     assert.equal(h.layer.getStats().stale, true);
   });

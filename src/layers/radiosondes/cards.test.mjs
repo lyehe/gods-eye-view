@@ -7,8 +7,6 @@ import {
   buildSondeLabel,
   buildSelectedSondeCard,
   formatAge,
-  aloftText,
-  landedText,
   RADIOSONDES_OVERLAY_OPTIONS,
 } from './cards.js';
 import { RADIOSONDE_LABEL_CANDIDATE_CAP } from './policy.js';
@@ -161,13 +159,11 @@ test('ambient source leaves capacity for the named candidate cap and host declut
   assert.equal(RADIOSONDES_OVERLAY_OPTIONS.solveIntervalMs, 0);
 });
 
-test('ages and Weather card counts retain shared formatting', () => {
+test('ages retain shared formatting', () => {
   assert.equal(formatAge(59_999), '<1m');
   assert.equal(formatAge(60_000), '1m');
   assert.equal(formatAge(3_600_000), '1h');
   assert.equal(formatAge(-1), null);
-  assert.equal(aloftText(2), '2 aloft');
-  assert.equal(landedText(1), '1 landed');
 });
 
 test('an observed burst maximum stays in the full card, including historical phases', () => {

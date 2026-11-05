@@ -27,6 +27,29 @@ test('documentation pins the token, voice state, routes, coverage and attributio
   for (const file of ['../../../DATA_SOURCES.md', '../../../README.md'])
     assert.match(read(file), /SondeHub.*CC BY-SA 2.0/);
 });
+test('documentation places counted balloon controls and launch guidance in the Weather group row', () => {
+  const state = weatherState().replace(/\s+/g, ' ');
+  assert.match(
+    state,
+    /layer panel's Weather group row counts ascending, descending, landed and lost contacts/,
+  );
+  assert.match(state, /unknown direction only when non-zero/);
+  assert.match(state, /Both landed states count as Landed/);
+  assert.match(state, /single info line shows connection status first/);
+  assert.match(
+    state,
+    /launch reminder when no balloons are loaded, or the next launch window/,
+  );
+  assert.doesNotMatch(state, /Weather card|Weather legend|readout/i);
+  assert.match(
+    read('../../../README.md'),
+    /Weather balloons.*counts and launch guidance in the Weather group row/,
+  );
+  assert.match(
+    read('../../../changelog.d/1-radiosondes.md').replace(/\s+/g, ' '),
+    /layer row shows per-state counts and connection status or launch guidance/,
+  );
+});
 test('documentation pins flight-style sprites, retained contact labels and host-owned declutter', () => {
   const state = weatherState().replace(/\s+/g, ' ');
   for (const rule of [

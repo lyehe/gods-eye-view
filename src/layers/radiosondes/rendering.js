@@ -13,7 +13,7 @@ import * as policy from './policy.js';
 import { isSondeAloft, isSondeLanded } from './records.js';
 import { createSondeRenderModel } from './renderModel.js';
 
-/** North-up 20 px art, rasterised at 3x for crisp orbital and legend sizes. */
+/** North-up 20 px art, rasterised at 3x for crisp orbital sprites. */
 function createSondeSprite(color, symbol, outlinePx) {
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = 60;
@@ -408,7 +408,6 @@ export function createRadiosondeRendering({ viewer, services, overlayHost }) {
     return true;
   }
   return {
-    image,
     sync,
     cull,
     labels,

@@ -592,7 +592,6 @@ export class LayerPanel {
               'weather-lightning',
               'weather-cyclones',
               'air-quality',
-              'radiosondes',
             ].includes(layer.id),
         )
         .map((layer) => ({

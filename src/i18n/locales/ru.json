@@ -3248,28 +3248,13 @@
   "Coverage depends on volunteer receivers": "Покрытие зависит от добровольных приёмных станций",
   "SondeHub contributors": "Участники SondeHub",
   "CC BY-SA 2.0": "CC BY-SA 2.0",
-  "{count} aloft": {
-    "one": "{count} в воздухе",
-    "few": "{count} в воздухе",
-    "many": "{count} в воздухе",
-    "other": "{count} в воздухе"
-  },
-  "{count} landed": {
-    "one": "{count} на земле",
-    "few": "{count} на земле",
-    "many": "{count} на земле",
-    "other": "{count} на земле"
-  },
   "Live feed unavailable on this server": "Прямой поток недоступен на этом сервере",
   "Weather balloon source unavailable": "Источник данных метеозондов недоступен",
   "Weather balloons": "Метеозонды",
   "None aloft — launches are around 00:00 and 12:00 UTC": "В воздухе нет — запуски около 00:00 и 12:00 UTC",
   "Aloft (direction unknown)": "В воздухе (направление неизвестно)",
   "Landed": "На земле",
-  "SondeHub": "SondeHub",
-  "volunteer receivers": "добровольные приёмные станции",
   "Reconnecting to SondeHub…": "Переподключение к SondeHub…",
-  "densest in Europe, the US and Australia": "плотнее всего в Европе, США и Австралии",
   "BURST": "РАЗРЫВ",
   "Malformed weather balloon snapshot": "Некорректный снимок данных метеозондов",
   "Exit cockpit to fly to a weather balloon": "Выйдите из кабины, чтобы перелететь к метеозонду",
@@ -3285,12 +3270,6 @@
   "Direction unknown": "Направление неизвестно",
   "last fix {age} ago": "последняя позиция {age} назад",
   "Last reported: {values}": "Последние полученные данные: {values}",
-  "{count} signal lost": {
-    "one": "{count} без сигнала",
-    "few": "{count} без сигнала",
-    "many": "{count} без сигнала",
-    "other": "{count} без сигнала"
-  },
   "radiosonde-label|landed": "приземлился",
   "radiosonde-label|lost": "потерян",
   "Vertical {speed}": "Вертикальная скорость {speed}",

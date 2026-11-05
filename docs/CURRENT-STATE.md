@@ -127,7 +127,7 @@ balloons mark signal loss. Symbols have dark outlines, a 20 px base size and
 aircraft distance scaling `(1000, 3, 8e6, 0.5)`. They remain north-up and retain
 their phase shape when selected. Rose aloft sprites draw at altitude with drop
 lines below 3,000 km camera height; unknown direction reduces alpha. Ground
-marks are muted rose-grey. The Weather legend uses the same art at 12 px.
+marks are muted rose-grey.
 A single reused `BillboardCollection` updates changed membership and visuals
 in place. `MAX_SONDES_RENDERED = 2000` bounds drawing; selection, aloft state
 and recency rank excess contacts.
@@ -155,8 +155,10 @@ with no per-frame scan.
 `RADIOSONDE_DATA_BATCH_MS = 500` coalesces pushes after the first useful data.
 Content signatures skip unchanged input; unchanged visuals produce zero
 billboard writes. Requests go through the render governor once per batch.
-The Weather card counts ascending, descending, landed and lost contacts, adding
-unknown direction only when non-zero. Both landed states count as Landed.
+The layer panel's Weather group row counts ascending, descending, landed and
+lost contacts, adding unknown direction only when non-zero. Both landed states
+count as Landed. Its single info line shows connection status first, otherwise
+the launch reminder when no balloons are loaded, or the next launch window.
 Release windows cover the hour before 00:00 and 12:00 UTC. Selection shows a
 rose altitude trail with a dark outline, an observed burst marker and 10/20/30 km
 drop-line ticks below the current or known burst altitude. The selected card
@@ -590,7 +592,7 @@ global mosaic). Wind shows forecast valid and issue times and does not follow
 history. Satellite clouds uses Clouds only / Full controls, a continuous cloud
 filter slider and Soft/Vivid opacity presets in its right-rail settings.
 
-Left weather rows retain only the toggle and one status line with a source
+Rows for these products retain only the toggle and one status line with a source
 tooltip. Configuration and the cyclone Storms list live in the cards, as do the
 cyclone advisory, position time, wind, pressure, geometry status and the
 official advisory link. The panel hides when empty, auto-expands once per page

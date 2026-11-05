@@ -64,7 +64,6 @@ function legendView(legend) {
         )
       : '',
     labels: legend?.labels || [],
-    images: legend?.images || [],
   };
 }
 </script>
@@ -145,15 +144,7 @@ function legendView(legend) {
               :key="index"
               class="rail-card-legend-entry"
               :data-color="color"
-              ><img
-                v-if="legendView(block.legend).images[index]"
-                class="rail-card-legend-symbol"
-                :src="legendView(block.legend).images[index]"
-                width="12"
-                height="12"
-                alt=""
-              /><span
-                v-else
+              ><span
                 class="rail-card-legend-swatch"
                 :style="`background: ${color}`"
               ></span

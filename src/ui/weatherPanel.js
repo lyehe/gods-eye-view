@@ -1,5 +1,5 @@
 import { h, render as renderVue } from 'vue';
-import { formatNumber, formatUtcDayMonth, t } from '../i18n/index.js';
+import { formatUtcDayMonth, t } from '../i18n/index.js';
 import { utcClock } from './rail/utcClock.js';
 import WeatherReadout from './weather/WeatherReadout.vue';
 
@@ -14,7 +14,6 @@ const ORDER = [
   'weather-satellite',
   'weather-lightning',
   'air-quality',
-  'radiosondes',
 ];
 const OBSERVED = new Set(ORDER.slice(2, 5));
 const utc = (time) =>
@@ -198,12 +197,7 @@ export function createWeatherPanel({
         legend: {
           categorical,
           colors: legend.map(({ color }) => color),
-          images: legend.map(({ image }) => image),
-          labels: legend.map(({ label, count }) =>
-            categorical && Number.isFinite(count)
-              ? `${label} ${formatNumber(count)}`
-              : label,
-          ),
+          labels: legend.map(({ label }) => label),
           units: categorical ? '' : summary.units,
           ...(summary.unitsVerbatim === true ? { unitsVerbatim: true } : {}),
           zeroIndex: legend.findIndex(({ label }) => label === '0'),

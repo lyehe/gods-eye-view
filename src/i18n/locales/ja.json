@@ -3023,22 +3023,13 @@
   "Coverage depends on volunteer receivers": "観測範囲はボランティアの受信局に依存します",
   "SondeHub contributors": "SondeHub 貢献者",
   "CC BY-SA 2.0": "CC BY-SA 2.0",
-  "{count} aloft": {
-    "other": "飛行中 {count}"
-  },
-  "{count} landed": {
-    "other": "着地済み {count}"
-  },
   "Live feed unavailable on this server": "このサーバーではライブ配信を利用できません",
   "Weather balloon source unavailable": "気象観測気球のデータソースを利用できません",
   "Weather balloons": "気象観測気球",
   "None aloft — launches are around 00:00 and 12:00 UTC": "飛行中なし — 放球は通常 00:00 と 12:00 UTC 頃",
   "Aloft (direction unknown)": "飛行中（昇降方向不明）",
   "Landed": "着地済み",
-  "SondeHub": "SondeHub",
-  "volunteer receivers": "ボランティア受信局",
   "Reconnecting to SondeHub…": "SondeHub に再接続中…",
-  "densest in Europe, the US and Australia": "欧州、米国、オーストラリアで最も高密度",
   "BURST": "破裂",
   "Malformed weather balloon snapshot": "気象観測気球データの形式が不正です",
   "Exit cockpit to fly to a weather balloon": "気象観測気球へ移動するにはコックピットを終了してください",
@@ -3054,9 +3045,6 @@
   "Direction unknown": "上下方向不明",
   "last fix {age} ago": "最終位置は{age}前",
   "Last reported: {values}": "最終受信値: {values}",
-  "{count} signal lost": {
-    "other": "信号途絶 {count}"
-  },
   "radiosonde-label|landed": "着地",
   "radiosonde-label|lost": "信号途絶",
   "Vertical {speed}": "鉛直速度 {speed}",

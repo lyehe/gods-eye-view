@@ -3098,24 +3098,13 @@
   "Coverage depends on volunteer receivers": "Abdeckung hängt von freiwilligen Empfangsstationen ab",
   "SondeHub contributors": "SondeHub-Mitwirkende",
   "CC BY-SA 2.0": "CC BY-SA 2.0",
-  "{count} aloft": {
-    "one": "{count} in der Luft",
-    "other": "{count} in der Luft"
-  },
-  "{count} landed": {
-    "one": "{count} am Boden",
-    "other": "{count} am Boden"
-  },
   "Live feed unavailable on this server": "Live-Daten auf diesem Server nicht verfügbar",
   "Weather balloon source unavailable": "Wetterballon-Datenquelle nicht verfügbar",
   "Weather balloons": "Wetterballons",
   "None aloft — launches are around 00:00 and 12:00 UTC": "Keine in der Luft — Starts sind etwa um 00:00 und 12:00 UTC",
   "Aloft (direction unknown)": "In der Luft (Richtung unbekannt)",
   "Landed": "Am Boden",
-  "SondeHub": "SondeHub",
-  "volunteer receivers": "freiwillige Empfangsstationen",
   "Reconnecting to SondeHub…": "Verbindung zu SondeHub wird wiederhergestellt…",
-  "densest in Europe, the US and Australia": "am dichtesten in Europa, den USA und Australien",
   "BURST": "GEPLATZT",
   "Malformed weather balloon snapshot": "Ungültiger Wetterballon-Datenstand",
   "Exit cockpit to fly to a weather balloon": "Cockpit verlassen, um zu einem Wetterballon zu fliegen",
@@ -3131,10 +3120,6 @@
   "Direction unknown": "Richtung unbekannt",
   "last fix {age} ago": "letzte Position vor {age}",
   "Last reported: {values}": "Zuletzt gemeldet: {values}",
-  "{count} signal lost": {
-    "one": "{count} ohne Signal",
-    "other": "{count} ohne Signal"
-  },
   "radiosonde-label|landed": "gelandet",
   "radiosonde-label|lost": "verloren",
   "Vertical {speed}": "Vertikalgeschw. {speed}",

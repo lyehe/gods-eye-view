@@ -3023,22 +3023,13 @@
   "Coverage depends on volunteer receivers": "涵蓋範圍取決於志願接收站",
   "SondeHub contributors": "SondeHub 貢獻者",
   "CC BY-SA 2.0": "CC BY-SA 2.0",
-  "{count} aloft": {
-    "other": "{count}個在空中"
-  },
-  "{count} landed": {
-    "other": "{count}個已著陸"
-  },
   "Live feed unavailable on this server": "此伺服器無法提供即時資料流",
   "Weather balloon source unavailable": "氣象氣球資料來源無法使用",
   "Weather balloons": "氣象氣球",
   "None aloft — launches are around 00:00 and 12:00 UTC": "空中暫無氣球 — 通常在 00:00 和 12:00 UTC 左右發射",
   "Aloft (direction unknown)": "在空中（升降方向未知）",
   "Landed": "已著陸",
-  "SondeHub": "SondeHub",
-  "volunteer receivers": "志願接收站",
   "Reconnecting to SondeHub…": "正在重新連線至 SondeHub…",
-  "densest in Europe, the US and Australia": "在歐洲、美國和澳洲最密集",
   "BURST": "爆裂",
   "Malformed weather balloon snapshot": "氣象氣球快照格式錯誤",
   "Exit cockpit to fly to a weather balloon": "離開駕駛艙以飛往氣象氣球",
@@ -3054,9 +3045,6 @@
   "Direction unknown": "升降方向未知",
   "last fix {age} ago": "最後定位於{age}前",
   "Last reported: {values}": "最後回報值：{values}",
-  "{count} signal lost": {
-    "other": "{count}個訊號遺失"
-  },
   "radiosonde-label|landed": "已著陸",
   "radiosonde-label|lost": "失聯",
   "Vertical {speed}": "垂直速度 {speed}",

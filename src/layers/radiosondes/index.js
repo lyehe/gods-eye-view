@@ -1,6 +1,5 @@
 import * as Cesium from 'cesium';
 import { t, msg, formatNumber } from '../../i18n/index.js';
-import { utcClock } from '../../ui/rail/utcClock.js';
 import { createContactTrailRenderer } from '../../data/contactTrailRenderer.js';
 import { transitStyleProfile } from '../../data/transitPresetStyle.js';
 import { createRadiosondeRendering } from './rendering.js';
@@ -20,9 +19,6 @@ import {
   buildSelectedSondeCard,
   formatAge,
   launchWindowText,
-  aloftText,
-  landedText,
-  signalLostText,
   RADIOSONDES_OVERLAY_SOURCE_ID,
   RADIOSONDES_SELECTED_SOURCE_ID,
   RADIOSONDES_SELECTED_OPTIONS,
@@ -772,18 +768,12 @@ export function createRadiosondesLayer({
       };
       for (const { phase } of records.values())
         counts[isSondeLanded(phase) ? 'landed' : phase]++;
-      const aloft = counts.ascending + counts.descending + counts.unknown;
-      const landed = counts.landed;
-      const lost = counts['signal-lost'];
       const legendEntry = (phase, label) => ({
         label,
         count: counts[phase],
         color: policy.RADIOSONDE_SYMBOLS[phase].color,
-        image: rendering?.image(phase),
       });
       return {
-        readout: true,
-        legendCategorical: true,
         chips: [],
         legend: [
           legendEntry('ascending', t('Ascending')),
@@ -794,31 +784,14 @@ export function createRadiosondesLayer({
           legendEntry('landed', t('Landed')),
           legendEntry('signal-lost', t('Signal lost')),
         ],
-        summary: {
-          label: `${t('Weather balloons')} · ${t('SondeHub')}`,
-          coverage: `${t('Global')} · ${t('volunteer receivers')}`,
-          detail:
-            observedAt === null
-              ? ''
-              : utcClock(new Date(observedAt).toISOString()),
-          status:
-            upstream === 'unavailable'
-              ? t('Live feed unavailable on this server')
-              : error || upstream !== 'live' || reconnecting()
-                ? t('Reconnecting to SondeHub…')
-                : null,
-          compact: records.size
-            ? `${aloftText(aloft)} · ${landedText(landed)} · ${signalLostText(lost)}`
-            : t('None aloft — launches are around 00:00 and 12:00 UTC'),
-          lines: [
-            { id: 'launch-window', text: launchWindowText(now()), muted: true },
-            {
-              id: 'disclaimer',
-              text: `${t('Coverage depends on volunteer receivers')} · ${t('densest in Europe, the US and Australia')}`,
-              muted: true,
-            },
-          ],
-        },
+        info:
+          upstream === 'unavailable'
+            ? t('Live feed unavailable on this server')
+            : error || upstream !== 'live' || reconnecting()
+              ? t('Reconnecting to SondeHub…')
+              : records.size === 0
+                ? t('None aloft — launches are around 00:00 and 12:00 UTC')
+                : launchWindowText(now()),
       };
     },
   };

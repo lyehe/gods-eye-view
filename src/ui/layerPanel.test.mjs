@@ -313,7 +313,7 @@ test('the unavailable chip may abbreviate, but its accessible name keeps the ful
   assert.match(toggle.ariaLabel, /^Active Fires: UNAVAILABLE\./);
 });
 
-test('the Weather readout receives enabled air-quality and radiosondes alongside weather layers', async () => {
+test('the Weather readout receives enabled air-quality and weather layers, excluding radiosondes', async () => {
   const { LayerPanel } = await import('./layerPanel.js');
   const layers = ['wind', 'air-quality', 'radiosondes', 'other'].map((id) => ({
     id,
@@ -337,9 +337,63 @@ test('the Weather readout receives enabled air-quality and radiosondes alongside
     [
       ['wind', 'wind'],
       ['air-quality', 'air-quality'],
-      ['radiosondes', 'radiosondes'],
     ],
   );
+});
+
+test('the radiosondes row renders counts and one info line in the Weather group without a readout', async () => {
+  const { LayerPanel } = await import('./layerPanel.js');
+  document.body.replaceChildren();
+  const container = document.body.appendChild(document.createElement('div'));
+  const legend = [
+    { label: 'Ascending', count: 2, color: '#ff8fb1' },
+    { label: 'Descending', count: 3, color: '#ff8fb1' },
+    { label: 'Landed', count: 0, color: '#b499a2' },
+    { label: 'Signal lost', count: 1, color: '#a2a9b0' },
+  ];
+  const info = 'Next launch window 11:00–12:00 UTC · in 3h';
+  const layer = {
+    id: 'radiosondes',
+    name: 'Weather balloons',
+    source: 'SondeHub',
+    enabled: true,
+    showInTogglePanel: true,
+    stats: { count: 5 },
+  };
+  const panel = new LayerPanel({
+    getLayers: () => [layer],
+    hasRowControls: () => true,
+    subscribeRowControls: () => {},
+    getRowControls: () => ({ legend, info }),
+  });
+  try {
+    panel.mount(container);
+    assert.equal(
+      container.querySelector('.data-layer-group-heading').textContent,
+      'Weather',
+    );
+    const row = container.querySelector('[data-layer-id="radiosondes"]');
+    assert.ok(row.querySelector('.data-count'));
+    assert.deepEqual(
+      [...row.querySelectorAll('.data-toggle-legend-item')].map((item) =>
+        item.textContent.trim(),
+      ),
+      ['Ascending 2', 'Descending 3', 'Landed 0', 'Signal lost 1'],
+    );
+    assert.equal(row.querySelectorAll('.data-toggle-controls-info').length, 1);
+    assert.equal(
+      row.querySelector('.data-toggle-controls-info').textContent,
+      info,
+    );
+    panel._refreshTogglePanel();
+    assert.equal(
+      row.querySelector('.data-toggle-controls-info').textContent,
+      info,
+    );
+  } finally {
+    panel.destroy();
+    document.body.replaceChildren();
+  }
 });
 
 // Directions renders in the Utilities panel's list; Data Layers keeps the rest.

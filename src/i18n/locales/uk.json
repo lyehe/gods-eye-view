@@ -3248,28 +3248,13 @@
   "Coverage depends on volunteer receivers": "Покриття залежить від добровільних приймальних станцій",
   "SondeHub contributors": "Учасники SondeHub",
   "CC BY-SA 2.0": "CC BY-SA 2.0",
-  "{count} aloft": {
-    "one": "{count} у повітрі",
-    "few": "{count} у повітрі",
-    "many": "{count} у повітрі",
-    "other": "{count} у повітрі"
-  },
-  "{count} landed": {
-    "one": "{count} на землі",
-    "few": "{count} на землі",
-    "many": "{count} на землі",
-    "other": "{count} на землі"
-  },
   "Live feed unavailable on this server": "Прямий потік недоступний на цьому сервері",
   "Weather balloon source unavailable": "Джерело даних метеозондів недоступне",
   "Weather balloons": "Метеозонди",
   "None aloft — launches are around 00:00 and 12:00 UTC": "У повітрі немає — запуски близько 00:00 та 12:00 UTC",
   "Aloft (direction unknown)": "У повітрі (напрямок невідомий)",
   "Landed": "На землі",
-  "SondeHub": "SondeHub",
-  "volunteer receivers": "добровільні приймальні станції",
   "Reconnecting to SondeHub…": "Повторне підключення до SondeHub…",
-  "densest in Europe, the US and Australia": "найщільніше в Європі, США та Австралії",
   "BURST": "РОЗРИВ",
   "Malformed weather balloon snapshot": "Некоректний знімок даних метеозондів",
   "Exit cockpit to fly to a weather balloon": "Вийдіть із кабіни, щоб перелетіти до метеозонда",
@@ -3285,12 +3270,6 @@
   "Direction unknown": "Напрямок невідомий",
   "last fix {age} ago": "остання позиція {age} тому",
   "Last reported: {values}": "Останні отримані дані: {values}",
-  "{count} signal lost": {
-    "one": "{count} без сигналу",
-    "few": "{count} без сигналу",
-    "many": "{count} без сигналу",
-    "other": "{count} без сигналу"
-  },
   "radiosonde-label|landed": "приземлився",
   "radiosonde-label|lost": "втрачений",
   "Vertical {speed}": "Вертикальна швидкість {speed}",

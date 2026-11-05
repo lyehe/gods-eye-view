@@ -2908,6 +2908,8 @@
   }
 }
 
-[data-layer-id='radiosondes'] .data-icon::before {
+:root[data-ui-theme='cyber']
+  .data-toggle-row[data-layer-id='radiosondes']
+  .data-icon::before {
   content: '◓';
 }
