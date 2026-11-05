@@ -8,4 +8,4 @@
   skip unchanged signatures and coalesce pushes at 500 ms. Selection shows the
   flight trail, observed burst point and all available grouped metadata.
   Receiver fields are discarded; coverage depends on volunteer receivers
-  (lyehe, #0000).
+  (lyehe, #1).

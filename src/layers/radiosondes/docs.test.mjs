@@ -50,7 +50,7 @@ test('documentation pins flight-style sprites, retained contact labels and host-
     /`stateless: true` prevents the host's incumbent-overlap fallback/,
   ])
     assert.match(state, rule);
-  const change = read('../../../changelog.d/0000-radiosondes.md').replace(
+  const change = read('../../../changelog.d/1-radiosondes.md').replace(
     /\s+/g,
     ' ',
   );
