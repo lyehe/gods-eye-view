@@ -313,9 +313,9 @@ test('the unavailable chip may abbreviate, but its accessible name keeps the ful
   assert.match(toggle.ariaLabel, /^Active Fires: UNAVAILABLE\./);
 });
 
-test('the Weather readout receives enabled air-quality alongside weather layers', async () => {
+test('the Weather readout receives enabled air-quality and radiosondes alongside weather layers', async () => {
   const { LayerPanel } = await import('./layerPanel.js');
-  const layers = ['wind', 'air-quality', 'other'].map((id) => ({
+  const layers = ['wind', 'air-quality', 'radiosondes', 'other'].map((id) => ({
     id,
     icon: '*',
     enabled: true,
@@ -337,6 +337,7 @@ test('the Weather readout receives enabled air-quality alongside weather layers'
     [
       ['wind', 'wind'],
       ['air-quality', 'air-quality'],
+      ['radiosondes', 'radiosondes'],
     ],
   );
 });
@@ -430,4 +431,29 @@ test('without the Utilities list, Directions stays in Data Layers under Utilitie
   } finally {
     restore();
   }
+});
+
+test('Weather balloons appear once, appended to the Weather group', () => {
+  const source = readFileSync(
+    new URL('./layerPanel.js', import.meta.url),
+    'utf8',
+  );
+  const declarations = source.slice(
+    source.indexOf('const PANEL_GROUPS ='),
+    source.indexOf('const PANEL_POSITIONS ='),
+  );
+  const groups = JSON.parse(
+    runInNewContext(
+      `const msg = (text) => text;\n${declarations}\nJSON.stringify(PANEL_GROUPS)`,
+    ),
+  );
+  assert.equal(
+    groups.flatMap((group) => group.ids).filter((id) => id === 'radiosondes')
+      .length,
+    1,
+  );
+  assert.equal(
+    groups.find((group) => group.label === 'Weather').ids.at(-1),
+    'radiosondes',
+  );
 });

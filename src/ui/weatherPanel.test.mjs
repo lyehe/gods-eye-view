@@ -7,6 +7,112 @@ import { createWeatherPanel } from './weatherPanel.js';
 import { railDocumentFixture as railFixture } from './railTestFixture.mjs';
 import { createAirQualityLayer } from '../layers/airQuality/index.js';
 const ticks = ['2026-09-22T01:00:00Z', '2026-09-22T01:05:00Z'];
+test('categorical Weather legends patch symbols and counts in place, preserving swatches and uncounted labels', () => {
+  const f = fixture();
+  const view = createWeatherPanel(f);
+  const image = 'data:image/png;base64,iVBORw0KGgo=';
+  const balloon = {
+    id: 'radiosondes',
+    legendCategorical: true,
+    summary: { label: 'Weather balloons · SondeHub' },
+    legend: [
+      { label: 'Ascending', color: '#ff8fb1', image: `${image}A`, count: 2 },
+      { label: 'Descending', color: '#ff8fb1', image: `${image}B`, count: 3 },
+      { label: 'Landed', color: '#b499a2', image: `${image}C`, count: 4 },
+      { label: 'Signal lost', color: '#a2a9b0', image: `${image}D`, count: 5 },
+    ],
+  };
+  const swatches = {
+    id: 'weather-cyclones',
+    legendCategorical: true,
+    summary: { label: 'Cyclones' },
+    legend: [
+      { label: 'Track', color: '#7fe6ed' },
+      { label: 'Cone', color: '#7fe6ed44' },
+    ],
+  };
+  const entries = (id) =>
+    f.find((n) => n.className === 'rail-card-legend-entries', card(f, id));
+  const rows = (id) => [...entries(id).children];
+  view.update([balloon, swatches]);
+  const icons = rows('radiosondes').map((row) => row.children[0]);
+  assert.deepEqual(
+    icons.map((icon) => icon.tagName),
+    Array(4).fill('IMG'),
+  );
+  assert.deepEqual(
+    icons.map((icon) => icon.getAttribute('src')),
+    balloon.legend.map(({ image }) => image),
+  );
+  for (const icon of icons) {
+    assert.equal(icon.getAttribute('alt'), '');
+    assert.equal(icon.getAttribute('width'), '12');
+    assert.equal(icon.getAttribute('height'), '12');
+  }
+  const originalSwatches = rows('weather-cyclones').map(
+    (row) => row.children[0],
+  );
+  assert.deepEqual(
+    originalSwatches.map((node) => node.tagName),
+    ['SPAN', 'SPAN'],
+  );
+  f.writes();
+  view.update([structuredClone(balloon), structuredClone(swatches)]);
+  assert.equal(f.writes(), 0, 'unchanged image legends also write nothing');
+  view.update([
+    {
+      ...balloon,
+      legend: balloon.legend.map((entry) => ({
+        ...entry,
+        count: entry.count + 1,
+      })),
+    },
+    swatches,
+  ]);
+  assert.deepEqual(
+    rows('radiosondes').map((row) => row.children[1].textContent),
+    ['Ascending 3', 'Descending 4', 'Landed 5', 'Signal lost 6'],
+  );
+  rows('radiosondes').forEach((row, index) =>
+    assertSameNode(row.children[0], icons[index]),
+  );
+  rows('weather-cyclones').forEach((row, index) =>
+    assertSameNode(row.children[0], originalSwatches[index]),
+  );
+  const mixed = {
+    ...balloon,
+    legend: [balloon.legend[0], { ...balloon.legend[1], image: undefined }],
+  };
+  view.update([mixed, swatches]);
+  assert.deepEqual(
+    rows('radiosondes').map((row) => row.children[0].tagName),
+    ['IMG', 'SPAN'],
+    'an entry without art still uses a swatch',
+  );
+  const show = (aloft, landed) =>
+    view.update([
+      {
+        id: 'radiosondes',
+        icon: '🎈',
+        legendCategorical: true,
+        summary: { label: 'Weather balloons · SondeHub' },
+        legend: [
+          { label: 'Aloft', color: '#ff8fb1', count: aloft },
+          { label: 'Landed', color: '#ff8fb18c', count: landed },
+          { label: 'Uncounted', color: '#ffffff' },
+        ],
+      },
+    ]);
+  const labels = () =>
+    [...f.find((n) => n.className === 'rail-card-legend-entries').children].map(
+      (entry) => entry.children[1].textContent,
+    );
+  show(34, 52);
+  assert.deepEqual(labels(), ['Aloft 34', 'Landed 52', 'Uncounted']);
+  show(35, 0);
+  assert.deepEqual(labels(), ['Aloft 35', 'Landed 0', 'Uncounted']);
+  view.destroy();
+});
 const wind = {
   id: 'wind',
   icon: '🌬',
